@@ -4,24 +4,18 @@
 import SocketServer
 import logging
 
-HOST = '127.0.0.1'
-PORT = 18181
-
 logging.basicConfig(
     level=logging.INFO,
     filename='log.txt',
     format="%(asctime)s %(levelname)s %(message)s")
 
-class Handler(SocketServer.StreamRequestHandler):
-    def handle(self):
-        while True:
-            data = self.request.recv(1024)
-            # logging.debug(data)
-            if len(data) == 0:
-                break
-            self.request.send('Python TCP Server Test Input:' + data)
-            logging.info('Python TCP Server Test Input:' + data.strip())
-        self.request.close()
+class TCPHandler(SocketServer.StreamRequestHandler):
+  def handle(self):
+    self.data = self.rfile.readline().strip()
+    # print self.data
+    logging.info('Python TCP Server Test Input:' + self.data.strip())
 
-server = SocketServer.TCPServer((HOST, PORT), Handler)
-server.serve_forever()
+if __name__ == "__main__":
+  HOST, PORT = '127.0.0.1', 18181
+  server = SocketServer.TCPServer((HOST, PORT), TCPHandler)
+  server.serve_forever()
